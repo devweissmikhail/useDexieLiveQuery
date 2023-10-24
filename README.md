@@ -23,7 +23,7 @@ const activeTodo = useDexieLiveQuery(() => {
 
 // Multiple dependencies
 
-const collectionId = ref<number>(1);
+const collectionId = useDexieLiveQuery(() => db.keyval.get('collectionId').then(res => res?.value));
 const offset = ref<number>(15);
 const limit = ref<number>(15);
 
