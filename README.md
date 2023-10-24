@@ -14,7 +14,7 @@ const todos = useDexieLiveQuery(() => db.todos.toArray(), { initialValue: [] });
 const activeTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId'));
 
 const activeTodo = useDexieLiveQuery(() => {
-  return activeTodoId ? db.keyval.get(activeTodoId.value) : undefined;
+  return activeTodoId ? db.todos.get(activeTodoId.value) : undefined;
 }, { deps: activeTodoId });
 
 
