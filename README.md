@@ -9,9 +9,12 @@ npm install @vueuse/core dexie
 ### Examples
 
 ```typescript
-const todos = useDexieLiveQuery(() => db.todos.toArray(), { initialValue: [] });
+const todos = useDexieLiveQuery(
+  () => db.todos.toArray(),
+  { initialValue: [] }
+);
 
-const activeTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId'));
+const activeTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId').then(res => res?.value));
 
 const activeTodo = useDexieLiveQuery(() => {
   return activeTodoId ? db.todos.get(activeTodoId.value) : undefined;
@@ -24,7 +27,8 @@ const collectionId = ref<number>(1);
 const offset = ref<number>(15);
 const limit = ref<number>(15);
 
-const todos = useDexieLiveQuery(() =>
-  db.todos.orderBy(collectionId.value).offset(offset.value).limit(limit.value).toArray(),
-{ initialValue: [], deps: [collectionId, offset, limit] });
+const todos = useDexieLiveQuery(
+  () => db.todos.orderBy(collectionId.value).offset(offset.value).limit(limit.value).toArray(),
+  { initialValue: [], deps: [collectionId, offset, limit] }
+);
 ```
