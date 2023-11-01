@@ -1,5 +1,5 @@
 # useDexieLiveQuery
-Dexie integration for Vue 3
+[Dexie](https://dexie.org) integration for Vue 3
 
 ### Peer dependencies
 ```shell
