@@ -3,7 +3,7 @@ Dexie integration for Vue 3
 
 ### Peer dependencies
 ```shell
-npm install @vueuse/core dexie
+npm install dexie
 ```
 
 ### Examples
