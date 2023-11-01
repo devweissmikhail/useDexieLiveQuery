@@ -1,6 +1,5 @@
 import { liveQuery, type Subscription } from "dexie";
-import { shallowRef, watch, type ShallowRef } from "vue";
-import { tryOnScopeDispose } from "@vueuse/core";
+import { shallowRef, getCurrentScope, onScopeDispose, watch, type ShallowRef } from "vue";
 
 
 type Value<T, I> = I extends undefined ? T | undefined : T | I;
@@ -11,6 +10,11 @@ type Options<I> = {
   deps?: any;
 };
 
+
+function tryOnScopeDispose(fn: () => void) {
+  if (getCurrentScope())
+    onScopeDispose(fn);
+}
 
 export function useDexieLiveQuery<
   T,
