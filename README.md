@@ -17,11 +17,11 @@ const todos = useDexieLiveQuery(
   { initialValue: [] }
 );
 
-const activeTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId').then(res => res?.value));
+const kvActiveTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId').then(res => res?.value));
 
 const activeTodo = useDexieLiveQuery(() => Promise.resolve(
-  activeTodoId.value ? db.todos.get(activeTodoId.value) : undefined;
-), { deps: activeTodoId });
+  kvActiveTodoId.value ? db.todos.get(kvActiveTodoId.value) : undefined;
+), { deps: kvActiveTodoId });
 ```
 
 ### Multiple dependencies
@@ -34,5 +34,14 @@ const limit = ref<number>(15);
 const todos = useDexieLiveQuery(
   () => db.todos.orderBy(collectionId.value).offset(offset.value).limit(limit.value).toArray(),
   { initialValue: [], deps: [collectionId, offset, limit] }
+);
+```
+
+### Loaded status
+
+```typescript
+const [todos, loaded] = useDexieLiveQuery(
+  () => db.todos.toArray().then(todos => [todos, true]),
+  { initialValue: [] }
 );
 ```
