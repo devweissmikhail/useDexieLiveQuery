@@ -20,6 +20,7 @@ const todos = useDexieLiveQuery(
 const kvActiveTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId').then(res => res?.value));
 
 const activeTodo = useDexieLiveQuery(
+  /* In this case, the function must return a promise but not undefined */
   () => Promise.resolve(kvActiveTodoId.value ? db.todos.get(kvActiveTodoId.value) : undefined),
   { deps: kvActiveTodoId }
 );
