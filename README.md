@@ -42,6 +42,6 @@ const todos = useDexieLiveQuery(
 ```typescript
 const { todos, loaded } = useDexieLiveQuery(
   () => db.todos.toArray().then(todos => ({ todos, loaded: true })),
-  { initialValue: { todos: undefined, loaded: true } }
+  { initialValue: { todos: undefined, loaded: false } }
 );
 ```
