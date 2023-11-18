@@ -19,9 +19,10 @@ const todos = useDexieLiveQuery(
 
 const kvActiveTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId').then(res => res?.value));
 
-const activeTodo = useDexieLiveQuery(() => Promise.resolve(
-  kvActiveTodoId.value ? db.todos.get(kvActiveTodoId.value) : undefined;
-), { deps: kvActiveTodoId });
+const activeTodo = useDexieLiveQuery(
+  () => Promise.resolve(kvActiveTodoId.value ? db.todos.get(kvActiveTodoId.value) : undefined),
+  { deps: kvActiveTodoId }
+);
 ```
 
 ### Multiple dependencies
