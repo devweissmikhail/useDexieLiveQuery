@@ -20,8 +20,7 @@ const todos = useDexieLiveQuery(
 const kvActiveTodoId = useDexieLiveQuery(() => db.keyval.get('activeTodoId').then(res => res?.value));
 
 const activeTodo = useDexieLiveQuery(
-  /* In any case, the function must return a promise */
-  () => Promise.resolve(kvActiveTodoId.value ? db.todos.get(kvActiveTodoId.value) : undefined),
+  () => kvActiveTodoId.value ? db.todos.get(kvActiveTodoId.value) : undefined,
   { deps: kvActiveTodoId }
 );
 ```
@@ -36,6 +35,24 @@ const limit = ref<number>(15);
 const todos = useDexieLiveQuery(
   () => db.todos.orderBy(collectionId.value).offset(offset.value).limit(limit.value).toArray(),
   { initialValue: [], deps: [collectionId, offset, limit] }
+);
+```
+
+### TS Generic arguments
+
+```typescript
+// Sometimes we may need to specify complex types for a ref's inner value.
+
+interface Todo {
+  id: string;
+  ...
+}
+
+type InitialValue = null | [];
+
+const todos = useDexieLiveQuery<Todos[], InitialValue>(
+  () => db.todos.toArray(),
+  { initialValue: [] }
 );
 ```
 
