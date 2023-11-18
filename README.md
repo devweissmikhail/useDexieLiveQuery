@@ -40,8 +40,8 @@ const todos = useDexieLiveQuery(
 ### Loaded status
 
 ```typescript
-const [todos, loaded] = useDexieLiveQuery(
-  () => db.todos.toArray().then(todos => [todos, true]),
-  { initialValue: [] }
+const { todos, loaded } = useDexieLiveQuery(
+  () => db.todos.toArray().then(todos => ({ todos, loaded: true })),
+  { initialValue: { todos: undefined, loaded: true } }
 );
 ```
