@@ -38,7 +38,16 @@ const todos = useDexieLiveQuery(
 );
 ```
 
-### TS Generic arguments
+### Loaded status
+
+```typescript
+const { todos, loaded } = useDexieLiveQuery(
+  () => db.todos.toArray().then(todos => ({ todos, loaded: true })),
+  { initialValue: { todos: [], loaded: false } }
+);
+```
+
+### Override default type inference
 
 ```typescript
 // Sometimes we may need to specify complex types for a ref's inner value.
@@ -53,14 +62,5 @@ type InitialValue = null | [];
 const todos = useDexieLiveQuery<Todos[], InitialValue>(
   () => db.todos.toArray(),
   { initialValue: [] }
-);
-```
-
-### Loaded status
-
-```typescript
-const { todos, loaded } = useDexieLiveQuery(
-  () => db.todos.toArray().then(todos => ({ todos, loaded: true })),
-  { initialValue: { todos: [], loaded: false } }
 );
 ```
