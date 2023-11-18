@@ -46,21 +46,3 @@ const { todos, loaded } = useDexieLiveQuery(
   { initialValue: { todos: [], loaded: false } }
 );
 ```
-
-### Override default type inference
-
-```typescript
-// Sometimes we may need to specify complex types for a ref's inner value.
-
-interface Todo {
-  id: string;
-  ...
-}
-
-type InitialValue = null | [];
-
-const todos = useDexieLiveQuery<Todos[], InitialValue>(
-  () => db.todos.toArray(),
-  { initialValue: [] }
-);
-```
