@@ -29,7 +29,7 @@ const { todos, status } = useDexieLiveQuery(
 ### With deps
 
 ```typescript
-import { useDexieLiveQueryWithDeps } from './utils/useDexieLiveQuery';
+import { useDexieLiveQuery, useDexieLiveQueryWithDeps } from './utils/useDexieLiveQuery';
 import { ref } from 'vue';
 
 
