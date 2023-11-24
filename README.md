@@ -35,7 +35,9 @@ import { ref } from 'vue';
 
 const activeListId = useDexieLiveQuery(() => db.keyval.get('activeListId').then(res => res?.value));
 
-// Alternative to [watch](https://vuejs.org/api/reactivity-core.html#watch), only in the callback you have to pass the request function
+// Alternative to watch (https://vuejs.org/api/reactivity-core.html#watch),
+// but you should return the request function in the callback
+
 const sortedTodos = useDexieLiveQueryWithDeps(
   activeListId,
   (activeListId: string | undefined) => db.todos.where('listId').equals(activeListId).toArray(),
