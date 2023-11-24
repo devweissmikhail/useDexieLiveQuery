@@ -1,13 +1,17 @@
 import { liveQuery, type Subscription } from "dexie";
-import { shallowRef, getCurrentScope, onScopeDispose, watch, type ShallowRef } from "vue";
+import { shallowRef, getCurrentScope, onScopeDispose, watch, type ShallowRef, type WatchOptions } from "vue";
 
 
 type Value<T, I> = I extends undefined ? T | undefined : T | I;
 
-type Options<I> = {
+type UseDexieLiveQueryWithDepsOptions<I, Immediate> = {
   onError?: (error: any) => void;
   initialValue?: I;
-  deps?: any;
+} & WatchOptions<Immediate>;
+
+type UseDexieLiveQueryOptions<I> = {
+  onError?: (error: any) => void;
+  initialValue?: I;
 };
 
 
@@ -16,26 +20,70 @@ function tryOnScopeDispose(fn: () => void) {
     onScopeDispose(fn);
 }
 
+
+export function useDexieLiveQueryWithDeps<
+  T,
+  I = undefined,
+  Immediate extends Readonly<boolean> = true,
+>(
+  deps: any,
+  querier: (...data: any) => T | Promise<T>,
+  options: UseDexieLiveQueryWithDepsOptions<I, Immediate> = {},
+): ShallowRef<Value<T, I>> {
+
+  const { onError, initialValue, ...rest } = options;
+
+  const value = shallowRef<T | I | undefined>(initialValue);
+
+  let subscription: Subscription | undefined = undefined;
+
+  function start(...data: any) {
+    subscription?.unsubscribe();
+
+    const observable = liveQuery(() => querier(...data));
+
+    subscription = observable.subscribe({
+      next: result => {
+        value.value = result;
+      },
+      error: error => {
+        onError?.(error);
+      },
+    });    
+  }
+
+  function cleanup() {
+    subscription?.unsubscribe();
+
+    // Set to undefined to avoid calling unsubscribe multiple times on a same subscription
+    subscription = undefined;
+  }
+
+  watch(deps, start, { immediate: true, ...rest });
+
+  tryOnScopeDispose(() => {
+    cleanup();
+  });
+
+
+  return value as ShallowRef<Value<T, I>>;
+
+}
+
+
 export function useDexieLiveQuery<
   T,
   I = undefined,
 >(
   querier: () => T | Promise<T>,
-  options?: Options<I>,
+  options: UseDexieLiveQueryOptions<I> = {},
 ): ShallowRef<Value<T, I>> {
 
-  const value = shallowRef<T | I | undefined>(options?.initialValue);
+  const { onError, initialValue } = options;
+
+  const value = shallowRef<T | I | undefined>(initialValue);
 
   let subscription: Subscription | undefined = undefined;
-
-
-  tryOnScopeDispose(() => {
-    subscription?.unsubscribe();
-
-    // Set to undefined to avoid calling unsubscribe multiple times on a same subscription
-    subscription = undefined;
-  });
-
 
   function start() {
     subscription?.unsubscribe();
@@ -47,18 +95,23 @@ export function useDexieLiveQuery<
         value.value = result;
       },
       error: error => {
-        options?.onError?.(error);
+        onError?.(error);
       },
     });    
   }
 
+  function cleanup() {
+    subscription?.unsubscribe();
 
-  if (options?.deps)
-    watch(options.deps, () => {
-      start();
-    }, { immediate: true });
-  else
-    start();
+    // Set to undefined to avoid calling unsubscribe multiple times on a same subscription
+    subscription = undefined;
+  }
+
+  start();
+
+  tryOnScopeDispose(() => {
+    cleanup();
+  });
 
 
   return value as ShallowRef<Value<T, I>>;
