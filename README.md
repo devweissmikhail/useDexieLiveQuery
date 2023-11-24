@@ -38,15 +38,13 @@ const activeListId = useDexieLiveQuery(() => db.keyval.get('activeListId').then(
 // Alternative to watch (https://vuejs.org/api/reactivity-core.html#watch),
 // but you should return the request function in the callback
 
-const sortedTodos = useDexieLiveQueryWithDeps(
-  activeListId,
-  (activeListId: string | undefined) => db.todos.where('listId').equals(activeListId).toArray(),
-  {
-    initialValue: [],
-    flush: 'sync',
-    /* Supported all watch options, default: immediate: true */
-  }
-);
+const sortedTodos = useDexieLiveQueryWithDeps(activeListId, (activeListId: string | undefined) => {
+  return db.todos.where('listId').equals(activeListId).toArray();
+}, {
+  initialValue: [],
+  flush: 'sync',
+  /* Supported all watch options, default: immediate: true */
+});
 
 
 // Multiple deps
@@ -56,7 +54,7 @@ const limit = ref<number>(15);
 
 const limitedTodos = useDexieLiveQueryWithDeps(
   [offset, limit],
-  ([offset, limit]: [number, number]) => db.todos.offset(offset.value).limit(limit.value).toArray(),
+  ([offset, limit]: [number, number]) => db.todos.offset(offset).limit(limit).toArray(),
   { initialValue: [] }
 );
 ```
