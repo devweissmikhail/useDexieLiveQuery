@@ -20,7 +20,7 @@ const allTodos = useDexieLiveQuery(
 
 // Loaded status
 
-const { todos, status } = useDexieLiveQuery(
+const { todos, loaded } = useDexieLiveQuery(
   () => db.todos.toArray().then(todos => ({ todos, loaded: true })),
   { initialValue: { todos: [], loaded: false } }
 );
