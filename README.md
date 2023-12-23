@@ -42,7 +42,6 @@ const sortedTodos = useDexieLiveQueryWithDeps(activeListId, (activeListId: strin
   return db.todos.where('listId').equals(activeListId).toArray();
 }, {
   initialValue: [],
-  flush: 'post',
   /* Supported all watch options, default: immediate: true */
 });
 
